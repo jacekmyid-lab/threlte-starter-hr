@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { toolStore, selectionModeStore, sketchEditStore, documentStore, enterSketchMode, exitSketchMode, setTool } from '../lib/stores';
+  import { 
+    toolStore, 
+    selectionModeStore, 
+    sketchEditStore, 
+    documentStore, 
+    enterSketchMode, 
+    exitSketchMode, 
+    setTool 
+  } from '../lib/stores';
   import type { SelectionMode } from '../lib/types';
 
   let activeTool = $state($toolStore.activeTool);

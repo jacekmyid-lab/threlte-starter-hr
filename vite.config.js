@@ -3,4 +3,12 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [sveltekit()],
+  server: {
+    fs: {
+      strict: false
+    }
+  },
+  optimizeDeps: {
+    exclude: ['@threlte/core', '@threlte/extras', '@threlte/rapier']
+  }
 });

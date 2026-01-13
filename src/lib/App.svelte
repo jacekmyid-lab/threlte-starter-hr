@@ -1,4 +1,5 @@
 <script lang="ts">
+
   import { Canvas } from '@threlte/core';
   import { onMount } from 'svelte';
   import Scene from './Scene.svelte';
@@ -6,7 +7,11 @@
   import LeftPanel from '../components/LeftPanel.svelte';
   import RightPanel from '../components/RightPanel.svelte';
   import StatusBar from '../components/StatusBar.svelte';
-  import { initializeManifold, testManifold, isManifoldReady } from '../lib/manifoldTest';
+  import { 
+    initializeManifold, 
+    testManifold, 
+    isManifoldReady 
+  } from '../lib/manifoldTest';
 
   let initialized = $state(false);
   let loading = $state(true);

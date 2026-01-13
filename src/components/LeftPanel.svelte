@@ -1,5 +1,6 @@
 <script lang="ts">
   import { documentStore, selectionStore } from '../lib/stores';
+  
 
   let nodes = $state($documentStore.nodes);
   let selection = $state($selectionStore);

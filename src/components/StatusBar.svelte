@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { selectionStore, selectionModeStore, toolStore, sketchEditStore } from '../lib/stores';
-
+   import { 
+    selectionStore, 
+    selectionModeStore, 
+    toolStore, 
+    sketchEditStore 
+  } from '../lib/stores';
+  
   let selectionCount = $derived($selectionStore.length);
   let selectionMode = $derived($selectionModeStore);
   let currentTool = $derived($toolStore.activeTool);

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { T } from '@threlte/core';
   import * as THREE from 'three';
-  import { sketchEditStore, documentStore } from '../lib/stores';
-  import type { Plane, Point2D, SketchEntity } from '../lib/types';
+  import { sketchEditStore, documentStore } from './stores';
+  import type { Plane, Point2D, SketchEntity } from './types';
 
-  export let plane: Plane;
+  let { plane }: { plane: Plane } = $props();
 
   let sketch = $derived(
     $sketchEditStore.sketchId 

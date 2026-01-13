@@ -1,7 +1,7 @@
 <script lang="ts">
   import { T } from '@threlte/core';
   import { OrbitControls } from '@threlte/extras';
-  import { viewportStore, isSketchMode, activePlane } from '../lib/stores';
+  import { viewportStore, isSketchMode, activePlane } from './stores';
   import SketchRenderer from './SketchRenderer.svelte';
 
   let showGrid = $derived($viewportStore.showGrid);
