@@ -1,75 +1,86 @@
-<script>
-  import { T, useTask } from '@threlte/core'
-  import { interactivity, OrbitControls, } from '@threlte/extras'
-  import { Spring } from 'svelte/motion'
-  import { elasticOut } from 'svelte/easing'
-  interactivity()
-  
-  let scale = new Spring(0, { damping: 0.25, stiffness: 0.2, })
-  let rotation = $state(0)
+<script lang="ts">
+  import { T } from '@threlte/core';
+  import { OrbitControls } from '@threlte/extras';
+  import { viewportStore, isSketchMode, activePlane } from '../lib/stores';
+  import SketchRenderer from './SketchRenderer.svelte';
 
-  useTask((delta) => {
-    rotation += delta / 3
-  })
-
-  // Sets scale to 1 when component is first rendered
-  $effect(() => {
-    scale.set(1)
-  })
-
+  let showGrid = $derived($viewportStore.showGrid);
+  let showAxes = $derived($viewportStore.showAxes);
+  let sketching = $derived($isSketchMode);
+  let plane = $derived($activePlane);
 </script>
 
-<!-- CAMERA -->
+<!-- Camera -->
 <T.PerspectiveCamera
   makeDefault
-  position={[0, 1, 12]}
-  fov={44}
+  position={[10, 10, 10]}
+  fov={45}
+  near={0.1}
+  far={1000}
 >
-  <OrbitControls enableDamping />
+  <OrbitControls 
+    enableDamping
+    dampingFactor={0.1}
+    rotateSpeed={0.5}
+  />
 </T.PerspectiveCamera>
 
-<!-- LIGHTS -->
-<T.DirectionalLight position={[5, 8, -1]} castShadow />
-<T.AmbientLight color="aliceblue" />
+<!-- Lights -->
+<T.AmbientLight intensity={0.5} />
+<T.DirectionalLight position={[10, 10, 10]} intensity={0.8} />
+<T.DirectionalLight position={[-5, 5, -5]} intensity={0.4} />
 
-<!-- FLOOR -->
-<T.Mesh rotation.x={-Math.PI / 2} position={[0, -1, 0]} receiveShadow>
-  <T.BoxGeometry args={[10, 5, 0.125]} />
-  <T.MeshStandardMaterial 
-    color="#fff"
-    roughness={0.15}/>
+<!-- Grid -->
+{#if showGrid && !sketching}
+  <T.GridHelper args={[100, 20, 0x2563eb, 0x1e3a5f]} />
+{/if}
+
+<!-- Axes -->
+{#if showAxes}
+  <T.AxesHelper args={[5]} />
+{/if}
+
+<!-- Origin -->
+{#if $viewportStore.showOrigin}
+  <T.Mesh position={[0, 0, 0]}>
+    <T.SphereGeometry args={[0.1, 16, 16]} />
+    <T.MeshBasicMaterial color="#ffffff" />
+  </T.Mesh>
+{/if}
+
+<!-- Sketch Plane Visualization -->
+{#if sketching && plane}
+  {@const normal = plane.normal}
+  {@const origin = plane.origin}
+  
+  <!-- Sketch Grid -->
+  <T.Group position={[origin.x, origin.y, origin.z]}>
+    <T.GridHelper args={[50, 25, 0x06b6d4, 0x0e7490]} />
+    
+    <!-- Plane Surface -->
+    <T.Mesh rotation={[-Math.PI/2, 0, 0]}>
+      <T.PlaneGeometry args={[50, 50]} />
+      <T.MeshBasicMaterial 
+        color="#06b6d4"
+        transparent
+        opacity={0.05}
+        side={2}
+      />
+    </T.Mesh>
+  </T.Group>
+
+  <!-- Sketch Entities -->
+  <SketchRenderer {plane} />
+{/if}
+
+<!-- Test Box (placeholder for future models) -->
+<T.Mesh position={[0, 1, 0]} castShadow>
+  <T.BoxGeometry args={[2, 2, 2]} />
+  <T.MeshStandardMaterial color="#5588bb" />
 </T.Mesh>
 
-<!-- MESHES -->
-<T.Mesh
-  rotation.x={rotation}
-  position={[-2, 0, 0]}
-  scale={scale.current}
-  castShadow
->
-  <T.IcosahedronGeometry />
-  <T.MeshBasicMaterial 
-    color="#fe3d00" 
-    flatShading
-  />
-</T.Mesh>
-<T.Mesh
-  rotation.y={rotation}
-  scale={scale.current}
-  castShadow
->
-  <T.IcosahedronGeometry />
-  <T.MeshNormalMaterial />
-</T.Mesh>
-<T.Mesh
-  rotation.z={rotation}
-  position={[2, 0, 0]}
-  scale={scale.current}
-  castShadow
->
-  <T.IcosahedronGeometry />
-  <T.MeshStandardMaterial 
-    color="#fe3d00" 
-    flatShading
-  />
+<!-- Ground -->
+<T.Mesh rotation={[-Math.PI/2, 0, 0]} receiveShadow>
+  <T.CircleGeometry args={[50, 64]} />
+  <T.MeshStandardMaterial color="#334155" />
 </T.Mesh>
